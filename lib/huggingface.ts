@@ -41,11 +41,12 @@ export class HuggingFaceClient {
 
   /**
    * Call Hugging Face Inference API
+   * Uses the serverless inference API format
    */
-  private async callAPI(messages: HFMessage[]): Promise<string> {
+  private async callAPI(prompt: string): Promise<string> {
     try {
       const response = await fetch(
-        `https://api-inference.huggingface.co/models/${this.model}/v1/chat/completions`,
+        `https://api-inference.huggingface.co/models/${this.model}`,
         {
           method: 'POST',
           headers: {
@@ -53,21 +54,30 @@ export class HuggingFaceClient {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            model: this.model,
-            messages,
-            max_tokens: 500,
-            temperature: 0.7,
+            inputs: prompt,
+            parameters: {
+              max_new_tokens: 500,
+              temperature: 0.7,
+              return_full_text: false,
+            },
           }),
         }
       );
 
       if (!response.ok) {
-        const errorData = (await response.json()) as HFError;
-        throw new Error(`HF API Error: ${errorData.error || response.statusText}`);
+        const errorText = await response.text();
+        throw new Error(`HF API Error (${response.status}): ${errorText || response.statusText}`);
       }
 
-      const data = (await response.json()) as { choices: Array<{ message: { content: string } }> };
-      return data.choices[0]?.message?.content || '';
+      // Hugging Face returns an array with generated_text field
+      const data = (await response.json()) as Array<{ generated_text: string }>;
+
+      if (!Array.isArray(data) || data.length === 0) {
+        throw new Error('Invalid response format from Hugging Face API');
+      }
+
+      const generatedText = data[0].generated_text;
+      return generatedText.trim();
     } catch (error) {
       if (error instanceof Error) {
         console.error('Hugging Face API call failed:', error.message);
@@ -85,19 +95,13 @@ export class HuggingFaceClient {
    * @returns Creative fusion name
    */
   async generateFusionName(pokemon1Name: string, pokemon2Name: string): Promise<string> {
-    const messages: HFMessage[] = [
-      {
-        role: 'system',
-        content:
-          'You are a creative Pokemon namer. Combine two Pokemon names to create a unique fusion name. Be creative but keep it readable. Return ONLY the fusion name, nothing else.',
-      },
-      {
-        role: 'user',
-        content: `Create a fusion name for: ${pokemon1Name} + ${pokemon2Name}`,
-      },
-    ];
+    const prompt = `You are a creative Pokemon namer. Combine two Pokemon names to create a unique fusion name. Be creative but keep it readable. Return ONLY the fusion name, nothing else.
 
-    const result = await this.callAPI(messages);
+Create a fusion name for: ${pokemon1Name} + ${pokemon2Name}
+
+Fusion name:`;
+
+    const result = await this.callAPI(prompt);
     return result.trim();
   }
 
@@ -114,19 +118,13 @@ export class HuggingFaceClient {
     pokemon1Name: string,
     pokemon2Name: string
   ): Promise<string[]> {
-    const messages: HFMessage[] = [
-      {
-        role: 'system',
-        content:
-          'You are a Pokemon description writer. Create 3 unique, creative descriptions of what a Pokemon fusion might look like. Each description should be 1-2 sentences. Return each description on a separate line.',
-      },
-      {
-        role: 'user',
-        content: `Describe the fusion "${fusionName}" (a combination of ${pokemon1Name} and ${pokemon2Name}). Provide 3 distinct visual descriptions.`,
-      },
-    ];
+    const prompt = `You are a Pokemon description writer. Create 3 unique, creative descriptions of what a Pokemon fusion might look like. Each description should be 1-2 sentences. Return each description on a separate line numbered 1-3.
 
-    const result = await this.callAPI(messages);
+Describe the fusion "${fusionName}" (a combination of ${pokemon1Name} and ${pokemon2Name}). Provide 3 distinct visual descriptions.
+
+1.`;
+
+    const result = await this.callAPI(prompt);
 
     // Parse the response into 3 separate descriptions
     const descriptions = result
