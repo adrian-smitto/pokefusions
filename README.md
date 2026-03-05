@@ -106,6 +106,18 @@ npm run dev
 
 **Note**: This is a local-only application. No deployment required.
 
+### Hugging Face API
+
+This project uses Hugging Face's Inference API for text generation. The free tier supports:
+
+- **Mistral-7B-Instruct-v0.2** (default): Fast, high-quality responses
+- **Llama-2-7b-chat-hf**: Meta's open-source model
+- **Zephyr-7b-beta**: Lightweight and fast
+
+To change models, edit `lib/huggingface.ts` and modify the default model in the `HuggingFaceClient` constructor.
+
+**Rate Limits**: The free tier has rate limits. If you hit them, the application will gracefully handle errors.
+
 ### Project Tracking
 
 - **GitHub Repository**: [adrian-smitto/pokefusions](https://github.com/adrian-smitto/pokefusions)
