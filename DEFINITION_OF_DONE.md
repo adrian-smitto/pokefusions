@@ -36,31 +36,70 @@ Each user story is considered **DONE** when:
 
 ## Project-Level Definition of Done
 
-The **MVP is COMPLETE** when:
+**STOP. The MVP is COMPLETE when ALL of the following are true:**
 
-### Functional Requirements
-- [ ] All 14 user stories are completed
-- [ ] End-to-end flow works: Generate → Preview → Copy Tweet
-- [ ] Application runs locally without errors
-- [ ] All API integrations work (PokeAPI, Hugging Face)
+### Functional Requirements (All Must Pass)
+- [ ] **User can complete the core flow**: Generate fusions → View results → Copy tweet text
+- [ ] Application runs locally: `npm run dev` works without errors
+- [ ] Production build succeeds: `npm run build` completes successfully
+- [ ] All API integrations functional: PokeAPI responds, Hugging Face generates content
 
-### Deployment
-- [ ] Application is deployable to Vercel (or equivalent)
-- [ ] Environment variables are documented
-- [ ] Build succeeds: `npm run build`
-- [ ] Production build is tested
+### Deployment (At Least One)
+- [ ] **Either**: Deployed to live URL (Vercel, Netlify, etc.)
+- [ ] **Or**: Documented deployment steps that work
 
-### Documentation
-- [ ] README.md is comprehensive
-- [ ] Setup instructions work for a new developer
-- [ ] Environment variables documented
-- [ ] Known issues/limitations documented
+### Documentation (Minimum Viable)
+- [ ] README exists with setup instructions
+- [ ] Environment variables documented (.env.example exists)
+- [ ] Project is cloneable and runnable by another developer
 
-### Quality Gates
-- [ ] No critical bugs
-- [ ] Reasonable performance (< 5s for fusion generation)
-- [ ] Mobile responsive
-- [ ] Accessibility basics met (keyboard navigation, ARIA labels)
+### Quality (No Deal-Breakers)
+- [ ] No critical bugs that block core functionality
+- [ ] Performance is acceptable (< 10 seconds for 3 fusions)
+- [ ] Basic mobile responsiveness (not broken on phone)
+
+---
+
+## Scope Management Rules
+
+### ✅ ALLOWED - I May Do These Without Asking:
+- Fix bugs discovered during implementation
+- Improve code quality/refactor within existing stories
+- Add missing acceptance criteria to existing stories
+- Adjust technical approach if blocked
+- Add unit tests for code I write
+
+### ❌ NOT ALLOWED - I Must Ask First:
+- Add NEW user stories beyond the 14 planned
+- Add features not in the original scope
+- Significantly expand acceptance criteria of existing stories
+- Change the tech stack (Next.js/React/HuggingFace)
+- Add new integrations/APIs
+
+### 🔄 ITERATION PROCESS:
+1. Work through stories in dependency order
+2. If I discover we need something new for MVP to work:
+   - Create a new issue
+   - Tag it with "[SCOPE ADDITION]"
+   - **Ask for approval** before implementing
+3. If something is out of scope but would be nice:
+   - Document it in a "Future Enhancements" section
+   - Do NOT implement unless explicitly asked
+
+---
+
+## Hard Stop Conditions
+
+**I MUST STOP coding and ask for review when:**
+1. All 14 stories are complete
+2. OR: I hit a blocker I cannot resolve
+3. OR: I discover a fundamental issue with the approach
+4. OR: The "Scope Management Rules" would be violated
+
+**The project is DONE when:**
+- The Project-Level Definition of Done above is met
+- You review and approve the work
+- You say "the project is complete"
 
 ---
 
@@ -113,3 +152,34 @@ The MVP is considered **ready for production** when:
 - **Time to generate**: < 10 seconds for 3 fusions
 - **Error rate**: < 5% when all services are operational
 - **User satisfaction**: Manual testing confirms usable flow
+
+---
+
+## Scope Additions Log
+
+**Track any NEW issues added during development:**
+
+| Date | Issue | Reason | Approved |
+|------|-------|--------|----------|
+| - | - | Initial 14 stories | ✅ |
+
+*(Leave blank unless new scope is added)*
+
+---
+
+## Future Enhancements (Out of Scope - Do NOT Implement)
+
+Record nice-to-have ideas discovered during development:
+
+- [ ] Image generation for fusions
+- [ ] Auto-posting to Twitter integration
+- [ ] User authentication and favorites
+- [ ] History of generated fusions
+- [ ] Advanced animations and polish
+- [ ] Dark mode
+- [ ] Share functionality (social sharing)
+- [ ] Pokemon filtering by type/generation
+- [ ] Custom stat fusion (weighted vs average)
+- [ ] Multiple fusion variations per pair
+
+*(Do NOT implement without explicit approval)*
