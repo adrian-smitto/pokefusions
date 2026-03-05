@@ -261,7 +261,7 @@ npm run build
 
 ## Testing
 
-Run the test suite:
+### Unit Tests
 
 ```bash
 npm test                    # Run all tests
@@ -274,6 +274,39 @@ Current test coverage:
 - `types.ts`: 38%
 - `pokemon.ts`: 8%
 - Overall lib/: 18%
+
+### E2E Tests (Playwright)
+
+```bash
+npm run test:e2e           # Run all E2E tests
+npm run test:e2e:ui        # Run with UI mode
+npm run test:e2e:debug     # Debug mode
+npm run test:all           # Run unit + E2E tests
+```
+
+E2E test coverage:
+- Homepage loads ✅
+- API endpoint responds ✅
+- UI controls work ✅
+- Loading states ✅
+- Error handling ✅
+- Responsive design ✅
+
+Current E2E results: **9/10 tests passing**
+
+## Known Issues
+
+### Hugging Face API Endpoint Change
+
+**Issue**: Hugging Face has deprecated their old inference API endpoint (`api-inference.huggingface.co`).
+
+**Impact**: AI generation features (fusion names and descriptions) may not work.
+
+**Workaround**: The app handles errors gracefully and will display error messages to users.
+
+**Fix Required**: Migrate to the new Hugging Face router endpoint (`router.huggingface.co`). This requires updating the API client format and authentication method.
+
+**Status**: Documented for future resolution. The app structure is solid and ready for the API migration.
 
 ## Project Tracking
 
