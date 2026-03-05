@@ -78,7 +78,7 @@ npm run dev
 ## MVP Features
 
 ### Current Scope (v1.0)
-- ✅ Single-page dashboard
+- ✅ **Local-only dashboard** (no deployment required)
 - ✅ Generate N fusion options (configurable)
 - ✅ Fusion name generation (AI)
 - ✅ Fusion descriptions (AI - 3 variations)
@@ -100,10 +100,11 @@ npm run dev
 
 ### Available Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm start` - Start production server
+- `npm run dev` - Start development server (primary use case)
+- `npm run build` - Build for production (optional)
 - `npm run lint` - Run ESLint
+
+**Note**: This is a local-only application. No deployment required.
 
 ### Project Tracking
 

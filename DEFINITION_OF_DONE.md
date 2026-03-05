@@ -44,9 +44,9 @@ Each user story is considered **DONE** when:
 - [ ] Production build succeeds: `npm run build` completes successfully
 - [ ] All API integrations functional: PokeAPI responds, Hugging Face generates content
 
-### Deployment (At Least One)
-- [ ] **Either**: Deployed to live URL (Vercel, Netlify, etc.)
-- [ ] **Or**: Documented deployment steps that work
+### Deployment
+- [ ] Application runs locally via `npm run dev`
+- [ ] No live deployment required (local-only use case)
 
 ### Documentation (Minimum Viable)
 - [ ] README exists with setup instructions
