@@ -6,17 +6,21 @@
  */
 
 import { useState } from 'react';
+import { FusionCard, type FusionData } from '@/components/FusionCard';
+import { TweetPreview } from '@/components/TweetPreview';
 
 export default function Home() {
   const [count, setCount] = useState(3);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [fusions, setFusions] = useState<any[]>([]);
+  const [fusions, setFusions] = useState<FusionData[]>([]);
+  const [showTweetPreviews, setShowTweetPreviews] = useState(false);
 
   const handleGenerate = async () => {
     setIsLoading(true);
     setError(null);
     setFusions([]);
+    setShowTweetPreviews(false);
 
     try {
       const response = await fetch('/api/generate', {
@@ -39,6 +43,16 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleRegenerate = async (fusionId: string) => {
+    // For now, just regenerate all fusions
+    // In a future enhancement, we could regenerate individual fusions
+    await handleGenerate();
+  };
+
+  const toggleTweetPreviews = () => {
+    setShowTweetPreviews(!showTweetPreviews);
   };
 
   return (
@@ -86,6 +100,15 @@ export default function Home() {
             >
               {isLoading ? 'Generating...' : 'Generate Fusions'}
             </button>
+
+            {fusions.length > 0 && (
+              <button
+                onClick={toggleTweetPreviews}
+                className="px-6 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all"
+              >
+                {showTweetPreviews ? 'Hide' : 'Show'} Tweet Previews
+              </button>
+            )}
           </div>
         </div>
 
@@ -115,117 +138,26 @@ export default function Home() {
         {/* Results */}
         {fusions.length > 0 && !isLoading && (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
-              Generated Fusions ({fusions.length})
-            </h2>
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+                Generated Fusions ({fusions.length})
+              </h2>
+            </div>
 
             {fusions.map((fusion) => (
-              <div
-                key={fusion.id}
-                className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-200 dark:border-gray-700"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    {fusion.name}
-                  </h3>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {new Date(fusion.createdAt).toLocaleTimeString()}
-                  </span>
-                </div>
-
-                {/* Parent Pokemon */}
-                <div className="flex items-center gap-4 mb-4 text-sm">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium text-gray-700 dark:text-gray-300">
-                      {fusion.pokemon1.name}
-                    </span>
-                    <span className="text-gray-400">+</span>
-                    <span className="font-medium text-gray-700 dark:text-gray-300">
-                      {fusion.pokemon2.name}
-                    </span>
-                  </div>
-                  <span className="text-gray-400">•</span>
-                  <div className="flex gap-1">
-                    {fusion.pokemon1.types.map((type: string) => (
-                      <span
-                        key={type}
-                        className="px-2 py-1 text-xs font-medium rounded bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300"
-                      >
-                        {type}
-                      </span>
-                    ))}
-                    {fusion.pokemon2.types.map((type: string) => (
-                      <span
-                        key={type}
-                        className="px-2 py-1 text-xs font-medium rounded bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
-                      >
-                        {type}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Stats */}
-                <div className="mb-4">
-                  <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                    Stats
-                  </h4>
-                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 text-xs">
-                    <div>
-                      <span className="text-gray-500 dark:text-gray-400">HP:</span>{' '}
-                      <span className="font-medium text-gray-900 dark:text-gray-100">
-                        {fusion.stats.HP}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gray-500 dark:text-gray-400">Attack:</span>{' '}
-                      <span className="font-medium text-gray-900 dark:text-gray-100">
-                        {fusion.stats.Attack}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gray-500 dark:text-gray-400">Defense:</span>{' '}
-                      <span className="font-medium text-gray-900 dark:text-gray-100">
-                        {fusion.stats.Defense}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gray-500 dark:text-gray-400">Sp. Atk:</span>{' '}
-                      <span className="font-medium text-gray-900 dark:text-gray-100">
-                        {fusion.stats.spAttack}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gray-500 dark:text-gray-400">Sp. Def:</span>{' '}
-                      <span className="font-medium text-gray-900 dark:text-gray-100">
-                        {fusion.stats.spDefense}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gray-500 dark:text-gray-400">Speed:</span>{' '}
-                      <span className="font-medium text-gray-900 dark:text-gray-100">
-                        {fusion.stats.Speed}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Descriptions */}
-                <div>
-                  <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                    Fusion Descriptions
-                  </h4>
-                  <ul className="space-y-2">
-                    {fusion.descriptions.map((desc: string, idx: number) => (
-                      <li
-                        key={idx}
-                        className="text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-700/50 rounded-lg px-3 py-2"
-                      >
-                        {desc}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+              <div key={fusion.id} className="space-y-4">
+                <FusionCard fusion={fusion} onRegenerate={handleRegenerate} />
+                {showTweetPreviews && (
+                  <TweetPreview
+                    fusion={{
+                      name: fusion.name,
+                      pokemon1Name: fusion.pokemon1.name,
+                      pokemon2Name: fusion.pokemon2.name,
+                      descriptions: fusion.descriptions,
+                      stats: fusion.stats,
+                    }}
+                  />
+                )}
               </div>
             ))}
           </div>
